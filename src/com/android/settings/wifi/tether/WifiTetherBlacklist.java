@@ -66,11 +66,6 @@ public class WifiTetherBlacklist extends DashboardFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        if (FeatureFlagPersistent.isEnabled(context, FeatureFlags.NETWORK_INTERNET_V2)) {
-            use(MultiNetworkHeaderController.class).init(getSettingsLifecycle());
-        }
-        use(AirplaneModePreferenceController.class).setFragment(this);
     }
 
     @Override
@@ -87,44 +82,7 @@ public class WifiTetherBlacklist extends DashboardFragment implements
     private static List<AbstractPreferenceController> buildPreferenceControllers(Context context,
                                                                                  Lifecycle lifecycle, MetricsFeatureProvider metricsFeatureProvider, Fragment fragment,
                                                                                  MobilePlanPreferenceHost mobilePlanHost) {
-        final MobilePlanPreferenceController mobilePlanPreferenceController =
-                new MobilePlanPreferenceController(context, mobilePlanHost);
-        final WifiMasterSwitchPreferenceController wifiPreferenceController =
-                new WifiMasterSwitchPreferenceController(context, metricsFeatureProvider);
-        MobileNetworkPreferenceController mobileNetworkPreferenceController = null;
-        if (!FeatureFlagPersistent.isEnabled(context, FeatureFlags.NETWORK_INTERNET_V2)) {
-            mobileNetworkPreferenceController = new MobileNetworkPreferenceController(context);
-        }
-
-        final VpnPreferenceController vpnPreferenceController =
-                new VpnPreferenceController(context);
-        final PrivateDnsPreferenceController privateDnsPreferenceController =
-                new PrivateDnsPreferenceController(context);
-
-        if (lifecycle != null) {
-            lifecycle.addObserver(mobilePlanPreferenceController);
-            lifecycle.addObserver(wifiPreferenceController);
-            if (mobileNetworkPreferenceController != null) {
-                lifecycle.addObserver(mobileNetworkPreferenceController);
-            }
-            lifecycle.addObserver(vpnPreferenceController);
-            lifecycle.addObserver(privateDnsPreferenceController);
-        }
-
         final List<AbstractPreferenceController> controllers = new ArrayList<>();
-
-        if (FeatureFlagPersistent.isEnabled(context, FeatureFlags.NETWORK_INTERNET_V2)) {
-            controllers.add(new MobileNetworkSummaryController(context, lifecycle));
-        }
-        if (mobileNetworkPreferenceController != null) {
-            controllers.add(mobileNetworkPreferenceController);
-        }
-        controllers.add(new TetherPreferenceController(context, lifecycle));
-        controllers.add(vpnPreferenceController);
-        controllers.add(new ProxyPreferenceController(context));
-        controllers.add(mobilePlanPreferenceController);
-        controllers.add(wifiPreferenceController);
-        controllers.add(privateDnsPreferenceController);
         return controllers;
     }
 
@@ -138,14 +96,14 @@ public class WifiTetherBlacklist extends DashboardFragment implements
         Log.d(TAG, "onCreateDialog: dialogId=" + dialogId);
         switch (dialogId) {
             case MANAGE_MOBILE_PLAN_DIALOG_ID:
-                final MobilePlanPreferenceController controller =
-                        use(MobilePlanPreferenceController.class);
-                return new AlertDialog.Builder(getActivity())
-                        .setMessage(controller.getMobilePlanDialogMessage())
-                        .setCancelable(false)
-                        .setPositiveButton(com.android.internal.R.string.ok,
-                                (dialog, id) -> controller.setMobilePlanDialogMessage(null))
-                        .create();
+//                final MobilePlanPreferenceController controller =
+//                        use(MobilePlanPreferenceController.class);
+//                return new AlertDialog.Builder(getActivity())
+//                        .setMessage(controller.getMobilePlanDialogMessage())
+//                        .setCancelable(false)
+//                        .setPositiveButton(com.android.internal.R.string.ok,
+//                                (dialog, id) -> controller.setMobilePlanDialogMessage(null))
+//                        .create();
         }
         return super.onCreateDialog(dialogId);
     }
