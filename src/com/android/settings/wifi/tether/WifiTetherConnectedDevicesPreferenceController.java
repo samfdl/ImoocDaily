@@ -19,6 +19,7 @@ package com.android.settings.wifi.tether;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiDevice;
 import android.net.wifi.WifiManager;
@@ -146,31 +147,33 @@ public class WifiTetherConnectedDevicesPreferenceController extends WifiTetherBa
                 pref.setTitle(R.string.wifiap_default_device_name);
             }
             pref.setSummary(mConnectedAddressList.get(index));
+            String connectedAddress = mConnectedAddressList.get(index);
             pref.setOnPreferenceClickListener(
                     preference -> {
-                        showDisconnectDialog();
+                        System.out.println("connectedAddress: " + connectedAddress);
+                        showDisconnectDialog(connectedAddress);
                         return true;
                     });
             mWifiApListPrefCategory.addPreference(pref);
         }
     }
 
-    private void showDisconnectDialog(){
+    private void showDisconnectDialog(String address) {
         final AlertDialog.Builder disconnectDialog = new AlertDialog.Builder(mContext);
         disconnectDialog.setTitle("Disconnect now?");
-        disconnectDialog.setMessage("This action will disconnect \"00:01:f5:de:f4:c8\" from this device and add it to blocklist");
+        disconnectDialog.setMessage("This action will disconnect \"" + address + "\" from this device and add it to blocklist");
         disconnectDialog.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
-                    @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //...To-do
+                        SharedPreferences sharedPreferences = mContext.getSharedPreferences("hotspot", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("hotspot1", address);
+                        editor.commit();
                     }
                 });
         disconnectDialog.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
-                    @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //...To-do
                     }
                 });
         // 显示
