@@ -18,14 +18,14 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:settings="http://schemas.android.com/apk/res-auto"
-    android:key="wifi_hotspot_blocklist_screen"
-    android:title="@string/wifi_hotspot_blocklist_title"
+    android:key="wifi_hotspot_blacklist_screen"
+    android:title="@string/wifi_hotspot_blacklist_title"
     settings:searchable="false"
     settings:initialExpandedChildrenCount="3">
 
     <PreferenceCategory
-        android:key="wifi_hotspot_block_list"
+        android:key="wifi_hotspot_black_list"
         android:persistent="false"
-        android:title="@string/wifi_hotspot_blocklist_title" >
+        android:title="@string/wifi_hotspot_blacklist_title" >
     </PreferenceCategory>
 </PreferenceScreen>

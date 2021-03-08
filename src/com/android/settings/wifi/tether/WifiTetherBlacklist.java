@@ -46,7 +46,7 @@ import java.util.List;
 public class WifiTetherBlacklist extends DashboardFragment implements
         MobilePlanPreferenceHost {
 
-    private static final String TAG = "NetworkDashboardFrag";
+    private static final String TAG = "WifiTetherBlacklist";
 
     @Override
     public int getMetricsCategory() {
@@ -60,11 +60,7 @@ public class WifiTetherBlacklist extends DashboardFragment implements
 
     @Override
     protected int getPreferenceScreenResId() {
-        if (FeatureFlagPersistent.isEnabled(getContext(), FeatureFlags.NETWORK_INTERNET_V2)) {
-            return R.xml.network_and_internet_v2;
-        } else {
-            return R.xml.network_and_internet;
-        }
+        return R.xml.wifi_tether_blacklist;
     }
 
     @Override
