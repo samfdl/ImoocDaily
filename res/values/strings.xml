@@ -2496,8 +2496,8 @@
     <string name="wifiap_list_category">CONNECTED DEVICES</string>
     <string name="wifiap_default_device_name">Anonymous</string>
 
-    <string name="wifi_hotspot_blocklist_title">Blocklist</string>
-    <string name="wifi_hotspot_blocklist_summary">View devices which are not allowed to connect to this hotspot</string>
+    <string name="wifi_hotspot_blacklist_title">Blacklist</string>
+    <string name="wifi_hotspot_blacklist_summary">View devices which are not allowed to connect to this hotspot</string>
 
     <!-- Summary text when turning hotspot on -->
     <string name="wifi_tether_starting">Turning hotspot on\u2026</string>

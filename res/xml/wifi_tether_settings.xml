@@ -55,11 +55,11 @@
         android:title="@string/wifiap_list_category" >
     </PreferenceCategory>
 
-    <!-- add by fengdelin for blocklist-->
-    <com.android.settings.widget.FixedLineSummaryPreference
-        android:key="wifi_hotspot_blocklist"
-        android:title="@string/wifi_hotspot_blocklist_title"
-        android:summary="@string/wifi_hotspot_blocklist_summary"
-        android:fragment="com.android.settings.wifi.tether.WifiHotspotBlocklist"
-        settings:summaryLineCount="2" />
+    <!-- add by fengdelin for blacklist-->
+    <Preference
+        android:key="wifi_tether_blacklist"
+        android:title="@string/wifi_hotspot_blacklist_title"
+        android:summary="@string/wifi_hotspot_blacklist_summary"
+        android:fragment="com.android.settings.wifi.tether.WifiTetherBlacklist"
+        settings:controller="com.android.settings.wifi.tether.WifiTetherBlacklistPreferenceController"/>
 </PreferenceScreen>

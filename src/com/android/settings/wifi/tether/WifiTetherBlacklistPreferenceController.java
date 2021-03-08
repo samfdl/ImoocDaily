@@ -31,7 +31,7 @@ import com.android.settingslib.core.lifecycle.events.OnStop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WifiHotspotBlocklistPreferenceController extends WifiTetherBasePreferenceController
+public class WifiTetherBlacklistPreferenceController extends WifiTetherBasePreferenceController
         implements OnStart, OnStop {
 
     private static final String PREF_KEY = "ap_device_list";
@@ -46,8 +46,8 @@ public class WifiHotspotBlocklistPreferenceController extends WifiTetherBasePref
     private WifiTetherSoftApManager mWifiTetherSoftApManager;
     private WifiManager mWifiManager;
 
-    public WifiHotspotBlocklistPreferenceController(Context context,
-                                                    OnTetherConfigUpdateListener listener) {
+    public WifiTetherBlacklistPreferenceController(Context context,
+                                                   OnTetherConfigUpdateListener listener) {
         super(context, listener);
         mContext = context;
         mWifiManager = (WifiManager) mContext.getSystemService(WifiManager.class);
