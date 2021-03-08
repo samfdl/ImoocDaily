@@ -17,64 +17,17 @@
 package com.android.settings.wifi.tether;
 
 import android.content.Context;
-import android.icu.text.ListFormatter;
-import android.text.BidiFormatter;
-import android.text.TextUtils;
 
-import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settings.core.BasePreferenceController;
-import com.android.settings.wifi.WifiMasterSwitchPreferenceController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WifiTetherBlacklistPreferenceController extends BasePreferenceController {
-
-    private final WifiMasterSwitchPreferenceController mWifiPreferenceController;
-    private final MobileNetworkPreferenceController mMobileNetworkPreferenceController;
-    private final TetherPreferenceController mTetherPreferenceController;
-
     public WifiTetherBlacklistPreferenceController(Context context, String preferenceKey) {
         super(context, preferenceKey);
-        mMobileNetworkPreferenceController = new MobileNetworkPreferenceController(mContext);
-        mTetherPreferenceController = new TetherPreferenceController(
-                mContext, null /* lifecycle */);
-        mWifiPreferenceController = new WifiMasterSwitchPreferenceController(
-                mContext, null /* metrics */);
     }
 
     @Override
     public int getAvailabilityStatus() {
         return Utils.isDemoUser(mContext) ? UNSUPPORTED_ON_DEVICE : AVAILABLE_UNSEARCHABLE;
-    }
-
-    @Override
-    public CharSequence getSummary() {
-        final String wifiSummary = BidiFormatter.getInstance()
-                .unicodeWrap(mContext.getString(R.string.wifi_settings_title));
-        final String mobileSummary = mContext.getString(
-                R.string.network_dashboard_summary_mobile);
-        final String dataUsageSummary = mContext.getString(
-                R.string.network_dashboard_summary_data_usage);
-        final String hotspotSummary = mContext.getString(
-                R.string.network_dashboard_summary_hotspot);
-
-        final List<String> summaries = new ArrayList<>();
-        if (mWifiPreferenceController.isAvailable()
-                && !TextUtils.isEmpty(wifiSummary)) {
-            summaries.add(wifiSummary);
-        }
-        if (mMobileNetworkPreferenceController.isAvailable() && !TextUtils.isEmpty(mobileSummary)) {
-            summaries.add(mobileSummary);
-        }
-        if (!TextUtils.isEmpty(dataUsageSummary)) {
-            summaries.add(dataUsageSummary);
-        }
-        if (mTetherPreferenceController.isAvailable()
-                && !TextUtils.isEmpty(hotspotSummary)) {
-            summaries.add(hotspotSummary);
-        }
-        return ListFormatter.getInstance().format(summaries);
     }
 }
