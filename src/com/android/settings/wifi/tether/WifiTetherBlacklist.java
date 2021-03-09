@@ -20,11 +20,15 @@ import static com.android.settings.network.MobilePlanPreferenceController.MANAGE
 import android.app.Dialog;
 import android.app.settings.SettingsEnums;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.provider.SearchIndexableResource;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 
 import com.android.settings.R;
 import com.android.settings.core.FeatureFlags;
@@ -45,8 +49,11 @@ import java.util.List;
 @SearchIndexable
 public class WifiTetherBlacklist extends DashboardFragment implements
         MobilePlanPreferenceHost {
-
     private static final String TAG = "WifiTetherBlacklist";
+
+    private static final String PREF_KEY = "wifi_hotspot_black_list";
+
+    private PreferenceCategory mWifiTetherBlacklistPrefCategory;
 
     @Override
     public int getMetricsCategory() {
@@ -66,6 +73,25 @@ public class WifiTetherBlacklist extends DashboardFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+
+        mWifiTetherBlacklistPrefCategory = getPreferenceScreen().findPreference(PREF_KEY);
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("hotspot", Context.MODE_PRIVATE);
+        Preference pref = new Preference(getContext());
+        pref.setTitle(sharedPreferences.getString("hotspot1", "hotspot1"));
+        pref.setSummary(sharedPreferences.getString("hotspot1", "hotspot1"));
+        pref.setOnPreferenceClickListener(
+                preference -> {
+//                    System.out.println("connectedAddress: " + connectedAddress);
+//                    showDisconnectDialog(connectedAddress);
+                    return true;
+                });
+        mWifiTetherBlacklistPrefCategory.addPreference(pref);
     }
 
     @Override
