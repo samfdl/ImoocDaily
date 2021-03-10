@@ -150,7 +150,6 @@ public class WifiTetherConnectedDevicesPreferenceController extends WifiTetherBa
             String connectedAddress = mConnectedAddressList.get(index).split("\n")[1];
             pref.setOnPreferenceClickListener(
                     preference -> {
-                        System.out.println("connectedAddress: " + connectedAddress);
                         showDisconnectDialog(connectedAddress);
                         return true;
                     });
@@ -166,7 +165,7 @@ public class WifiTetherConnectedDevicesPreferenceController extends WifiTetherBa
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         SharedPreferences sharedPreferences = mContext.getSharedPreferences("hotspot", Context.MODE_PRIVATE);
-                        String addressList = address + "," + sharedPreferences.getString("hotspot", "");
+                        String addressList = address + "," + sharedPreferences.getString("hotspot", " ");
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("hotspot", addressList);
                         editor.commit();

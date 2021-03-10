@@ -15,8 +15,6 @@
  */
 package com.android.settings.wifi.tether;
 
-import static com.android.settings.network.MobilePlanPreferenceController.MANAGE_MOBILE_PLAN_DIALOG_ID;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.settings.SettingsEnums;
@@ -27,29 +25,20 @@ import android.os.Bundle;
 import android.provider.SearchIndexableResource;
 import android.util.Log;
 
-import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 
 import com.android.settings.R;
-import com.android.settings.core.FeatureFlags;
 import com.android.settings.dashboard.DashboardFragment;
-import com.android.settings.development.featureflags.FeatureFlagPersistent;
-import com.android.settings.network.MobilePlanPreferenceController.MobilePlanPreferenceHost;
 import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.wifi.WifiMasterSwitchPreferenceController;
-import com.android.settingslib.core.AbstractPreferenceController;
-import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
-import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.search.SearchIndexable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @SearchIndexable
-public class WifiTetherBlacklist extends DashboardFragment implements
-        MobilePlanPreferenceHost {
+public class WifiTetherBlacklist extends DashboardFragment {
     private static final String TAG = "WifiTetherBlacklist";
 
     private static final String PREF_KEY = "wifi_hotspot_black_list";
@@ -87,12 +76,14 @@ public class WifiTetherBlacklist extends DashboardFragment implements
         mWifiTetherBlacklistPrefCategory = getPreferenceScreen().findPreference(PREF_KEY);
 
         mSharedPreferences = getContext().getSharedPreferences("hotspot", Context.MODE_PRIVATE);
-        mAddressList = mSharedPreferences.getString("hotspot", "").split(",");
+        System.out.println("mSharedPreferences.getString:" + mSharedPreferences.getString("hotspot", ""));
+        mAddressList = mSharedPreferences.getString("hotspot", " ").split(",");
         updateBlacklist();
     }
 
     private void updateBlacklist() {
         mWifiTetherBlacklistPrefCategory.removeAll();
+        System.out.println("mAddressList.length:" + mAddressList.length);
         if (mAddressList.length > 1) {
             for (int i = 0; i < mAddressList.length - 1; i++) {
                 Preference pref = new Preference(getContext());
@@ -117,7 +108,7 @@ public class WifiTetherBlacklist extends DashboardFragment implements
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         SharedPreferences.Editor editor = mSharedPreferences.edit();
-                        String newAddressList = "";
+                        String newAddressList = " ";
                         for (int i = mAddressList.length - 2; i >= 0; i--) {
                             if (!mAddressList[i].equals(address)) {
                                 newAddressList = address + "," + newAddressList;
@@ -137,75 +128,14 @@ public class WifiTetherBlacklist extends DashboardFragment implements
         disconnectDialog.show();
     }
 
-    @Override
-    public int getHelpResource() {
-        return R.string.help_url_network_dashboard;
-    }
-
-    @Override
-    protected List<AbstractPreferenceController> createPreferenceControllers(Context context) {
-        return buildPreferenceControllers(context, getSettingsLifecycle(), mMetricsFeatureProvider,
-                this /* fragment */, this /* mobilePlanHost */);
-    }
-
-    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context,
-                                                                                 Lifecycle lifecycle, MetricsFeatureProvider metricsFeatureProvider, Fragment fragment,
-                                                                                 MobilePlanPreferenceHost mobilePlanHost) {
-        final List<AbstractPreferenceController> controllers = new ArrayList<>();
-        return controllers;
-    }
-
-    @Override
-    public void showMobilePlanMessageDialog() {
-        showDialog(MANAGE_MOBILE_PLAN_DIALOG_ID);
-    }
-
-    @Override
-    public Dialog onCreateDialog(int dialogId) {
-        Log.d(TAG, "onCreateDialog: dialogId=" + dialogId);
-        switch (dialogId) {
-            case MANAGE_MOBILE_PLAN_DIALOG_ID:
-//                final MobilePlanPreferenceController controller =
-//                        use(MobilePlanPreferenceController.class);
-//                return new AlertDialog.Builder(getActivity())
-//                        .setMessage(controller.getMobilePlanDialogMessage())
-//                        .setCancelable(false)
-//                        .setPositiveButton(com.android.internal.R.string.ok,
-//                                (dialog, id) -> controller.setMobilePlanDialogMessage(null))
-//                        .create();
-        }
-        return super.onCreateDialog(dialogId);
-    }
-
-    @Override
-    public int getDialogMetricsCategory(int dialogId) {
-        if (MANAGE_MOBILE_PLAN_DIALOG_ID == dialogId) {
-            return SettingsEnums.DIALOG_MANAGE_MOBILE_PLAN;
-        }
-        return 0;
-    }
-
     public static final SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER =
             new BaseSearchIndexProvider() {
                 @Override
                 public List<SearchIndexableResource> getXmlResourcesToIndex(
                         Context context, boolean enabled) {
                     final SearchIndexableResource sir = new SearchIndexableResource(context);
-                    if (FeatureFlagPersistent.isEnabled(context,
-                            FeatureFlags.NETWORK_INTERNET_V2)) {
-                        sir.xmlResId = R.xml.network_and_internet_v2;
-                    } else {
-                        sir.xmlResId = R.xml.network_and_internet;
-                    }
+                    sir.xmlResId = R.xml.wifi_tether_blacklist;
                     return Arrays.asList(sir);
-                }
-
-                @Override
-                public List<AbstractPreferenceController> createPreferenceControllers(Context
-                                                                                              context) {
-                    return buildPreferenceControllers(context, null /* lifecycle */,
-                            null /* metricsFeatureProvider */, null /* fragment */,
-                            null /* mobilePlanHost */);
                 }
 
                 @Override
