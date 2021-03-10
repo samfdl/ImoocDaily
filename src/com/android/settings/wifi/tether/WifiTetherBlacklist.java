@@ -17,15 +17,16 @@ package com.android.settings.wifi.tether;
 
 import static com.android.settings.network.MobilePlanPreferenceController.MANAGE_MOBILE_PLAN_DIALOG_ID;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.settings.SettingsEnums;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.SearchIndexableResource;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -55,6 +56,10 @@ public class WifiTetherBlacklist extends DashboardFragment implements
 
     private PreferenceCategory mWifiTetherBlacklistPrefCategory;
 
+    private SharedPreferences mSharedPreferences;
+
+    private String[] mAddressList;
+
     @Override
     public int getMetricsCategory() {
         return SettingsEnums.SETTINGS_NETWORK_CATEGORY;
@@ -81,17 +86,55 @@ public class WifiTetherBlacklist extends DashboardFragment implements
 
         mWifiTetherBlacklistPrefCategory = getPreferenceScreen().findPreference(PREF_KEY);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("hotspot", Context.MODE_PRIVATE);
-        Preference pref = new Preference(getContext());
-        pref.setTitle(sharedPreferences.getString("hotspot1", "hotspot1"));
-        pref.setSummary(sharedPreferences.getString("hotspot1", "hotspot1"));
-        pref.setOnPreferenceClickListener(
-                preference -> {
-//                    System.out.println("connectedAddress: " + connectedAddress);
-//                    showDisconnectDialog(connectedAddress);
-                    return true;
+        mSharedPreferences = getContext().getSharedPreferences("hotspot", Context.MODE_PRIVATE);
+        mAddressList = mSharedPreferences.getString("hotspot", "").split(",");
+        updateBlacklist();
+    }
+
+    private void updateBlacklist() {
+        mWifiTetherBlacklistPrefCategory.removeAll();
+        if (mAddressList.length > 1) {
+            for (int i = 0; i < mAddressList.length - 1; i++) {
+                Preference pref = new Preference(getContext());
+                String address = mAddressList[i];
+                pref.setTitle(address);
+                pref.setOnPreferenceClickListener(
+                        preference -> {
+                            System.out.println("connectedAddress: " + address);
+                            showDisconnectDialog(address);
+                            return true;
+                        });
+                mWifiTetherBlacklistPrefCategory.addPreference(pref);
+            }
+        }
+    }
+
+    private void showDisconnectDialog(String address) {
+        final AlertDialog.Builder disconnectDialog = new AlertDialog.Builder(getContext());
+        disconnectDialog.setTitle("Remove \"" + address + "\" from blacklist");
+        disconnectDialog.setMessage("This device \"" + address + "\" will be able to connect to this hotspot");
+        disconnectDialog.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences.Editor editor = mSharedPreferences.edit();
+                        String newAddressList = "";
+                        for (int i = mAddressList.length - 2; i >= 0; i--) {
+                            if (!mAddressList[i].equals(address)) {
+                                newAddressList = address + "," + newAddressList;
+                            }
+                        }
+                        editor.putString("hotspot", newAddressList);
+                        editor.commit();
+                        mAddressList = newAddressList.split(",");
+                        updateBlacklist();
+                    }
                 });
-        mWifiTetherBlacklistPrefCategory.addPreference(pref);
+        disconnectDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        disconnectDialog.show();
     }
 
     @Override
